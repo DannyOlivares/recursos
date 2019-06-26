@@ -1,0 +1,56 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+{% endblock %}
+{% block appBody %}
+    <section class="content-header">
+        <h1>
+            Motivos Casilleros
+            <small>Editar Motivo</small>
+        </h1>
+        <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li><a href="plataforma/mantenedores_crud_masters">Mantenedores</a></li>
+        <li><a href="plataforma/listar_motivos">Listado de Motivos</a></li>
+        <li class="active">Editar Motivo</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-primary">
+            <form id="editar_motivo_form"  action="" method="POST">
+              <div class="box-body col-sm-4"></div>
+              <div class="box-body col-sm-4">
+                <input type='hidden' name='id_motivo' id='id_motivo' value='{{ db_motivo.id }}' />
+                <div class="form-group">
+                    <select class="form-control" name="ubicacion">
+                        {% for d in db_ubicacion if false != db_ubicacion %}
+                            {% if db_motivo.ubicacion == d %}
+                            <option value="{{ d }}" selected>{{ d }}</option>
+                            {% else %}
+                            <option value="{{ d }}">{{ d }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                  <br>
+                  <input class="form-control" name="descripcion" id="descripcion" type="text" value='{{ db_motivo.descripcion }}' required/>
+                  <br>
+                </div>
+                <div class="panel-footer text-center">
+                  <button type="button" id="update_motivo" class="btn btn-default">Grabar</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+
+{% endblock %}
+{% block appScript %}
+    <script src="views/app/js/plataforma/plataforma.js"></script>
+{% endblock %}

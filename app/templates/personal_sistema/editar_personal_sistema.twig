@@ -1,0 +1,60 @@
+{% extends 'portal/portal' %}
+{% block appBody %}
+  <section class="content-header">
+      <h4>
+        <i class="fa fa-user"></i> EDITAR REGISTRO DE USUARIOS
+      </h4>
+      <ol class="breadcrumb">
+        <li><a href="portal"><i class="fa fa-home"></i> Home </a></li>
+        <li><a href="usuarios/listar_personal_sistema"> Usuarios </a></li>
+        <li class="active"> Editar </li>
+      </ol>
+  </section>
+
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary">
+          <form id="formeditar" name="formeditar">
+            <div class="box-body col-sm-2"></div>
+            <div class="box-body col-sm-4">
+              <div class="form-group">
+                <input type="hidden" name="editid_user" id="editid_user" value="{{db_usuario.id_user}}">
+                <input class="form-control" name="txtnombre" id="txtnombre" type="text"  value='{{db_usuario.name}}' required/>
+                <input class="form-control" name="txtemail"  id="txtemail"  type="email"    value='{{db_usuario.email}}' readonly='readonly'/>
+                <input class="form-control" name="txtcargo"  id="txtcargo"  type="text"    value='{{db_usuario.cargo}}' required/>
+                <input class="form-control" name="txtfono"   id="txtfono"   type="text"    value='{{db_usuario.fono}}'  required/>
+              </div>
+                <div class="form-group">Perfil Asignado
+                  <select name='cmbperfil' id='cmbperfil' class='form-control'>
+                    <option>--</option>
+                    {% for p in db_perfiles if false != db_perfiles %}
+                      {% if p.nombre == db_usuario.perfil  %}
+                        <option value='{{ p.nombre }}' selected='selected'>{{ p.nombre }}</option>
+                      {% else %}
+                        <option value='{{ p.nombre }}'>{{ p.nombre }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              <div class="form-group">
+                <button type="button" class="btn btn-default col-md-3" id="btnmodificar" name="btnmodificar" onclick="modificar_usuario()">Modificar Usuario</button>
+              </div>
+            </div>
+            <div class="box-body col-sm-4">
+              <div class="form-group">
+                <label class="col-sm-4  control-label">Rut Asocia Trabajador</label>
+                <div class="col-sm-5">
+                  <input class="form-control" name="rut_usuario" id="rut_usuario" type="text" value='{{db_usuario.rut_personal}}'/>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block appScript %}
+    <script src="views/app/js/personal/personal.js"></script>
+{% endblock %}

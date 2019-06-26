@@ -1,0 +1,50 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}{% endblock %}
+{% block appBody %}
+    <section class="content-header">
+        <h1>
+          Areas
+            <small>Editar Area</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">
+                    <i class="fa fa-home"></i>
+                    Home</a>
+            </li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <form id="formeditararea" action="" method="POST">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                              <input type="hidden" name="textid" id="textid" value="{{db_modificar_area.codigo}}">
+                                CODIGO AREA
+                                <input class="form-control" name="txteditarcodarea" id="txteditarcodarea" value="{{db_modificar_area.cod_area}}" type="text" required="required"/>
+                                <br>
+                                NOMBRE
+                                <input class="form-control" name="txteditarnombrearea" id="txteditarnombrearea"  value="{{db_modificar_area.descripcion}}" type="text"  required="required"/>
+                                <br>
+                            </div>
+                        <div class="col-md-12">
+                          <div class="col-md-4">
+                          </div>
+                          <button type="button" class="btn btn-primary" id="btnmodificararea" onclick="modificararea()" name="btnmodificararea">MODIFICAR AREA</button>
+                        </div>
+                      </div>
+                    </form>
+            </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}
+{% block appScript %}
+    <script src="views/app/js/area/area.js"></script>
+{% endblock %}

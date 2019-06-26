@@ -1,0 +1,105 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+  <link rel="stylesheet" href="views/app/template/datatables/dataTables.bootstrap.css">
+  <style media="screen">
+    .at{
+      display: none;
+    }
+  </style>
+{% endblock %}
+{% block appBody %}
+<div class="row">
+    <div class="col-md-12">
+        <section class="content-header">
+            <h1>
+                Areas
+
+                <div class="pull-right">
+                        <small>
+                        <div class="pull-right" id="divareas" name="divareas">
+                          <a class="btn btn-primary" id="btn_nueva_area" href="avar/nueva_area" title="Nueva Area" data-toggle="tooltip">
+                              Nueva Area
+                          </a>
+                        </div>
+                    </small>
+                </div>
+            </h1>
+
+        </section>
+    </div>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="formareas" name="formareas">
+                      <div id="tblcontrolareas" name="tblcontrolareas">
+
+
+                        <table id="tblareas" style="width:100%" name="tblareas" class="table table-bordered table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%">CODIGO</th>
+                                    <th style="width:50%">AREA</th>
+                                    <th style="width:20%">OPCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% set No = 1 %}
+                              {% for a in db_areas if false != db_areas %}
+                                  <tr>
+                                      <td>{{ a.cod_area }}</td>
+                                      <td>{{ a.descripcion}}</td>
+                                      {% if a.estado == 1 %}
+                                      <td><a data-toggle='tooltip' data-placement='top' id="btnmodificararea" name="btnmodificararea" title='Modificar Area'  href="avar/editar_area/{{ a.codigo }}" class='btn btn-success btn-sm'>
+                                          <i class='glyphicon glyphicon-edit'></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' name="btneliminararea" id="btneliminararea" title="Desactivar Area" onclick="eliminararea({{a.codigo }})" class='btn btn-danger btn-sm'>
+                                          <i class='glyphicon glyphicon-off'></i>
+                                          </a></td>
+                                      {% else %}
+                                      <td><a data-toggle='tooltip' data-placement='top' id="btnreactivar" name="btnreactivar" title='Reativar Area'  onclick="reactivar({{a.codigo }})" class='btn btn-warning btn-sm'>
+                                          <i class='glyphicon glyphicon-off'></i></a></td>
+                                      {% endif %}
+                                  </tr>
+                                  {% set No = No + 1 %}
+                              {% endfor %}
+                            </tbody>
+                        </table>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block appScript %}
+
+  <script src="views/app/template/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+  <script src="views/app/template/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+  <script src="views/app/js/area/area.js"></script>
+
+    <script>
+        $("#tblareas").dataTable({
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No hay datos para mostrar",
+                "info": "Mostrando _END_ Registros, de un total de _TOTAL_ ",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "infoEmpty": "No hay entradas para mostrar",
+                "lengthMenu": "Mostrar _MENU_ Filas",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "autoWidth": true,
+            "bSort": false,
+          "scrollX": true
+        });
+    </script>
+{% endblock %}

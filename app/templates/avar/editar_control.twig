@@ -1,0 +1,894 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+  <style media="screen">
+    .at {
+      display: none;
+    }
+  </style>
+{% endblock %}
+{% block appBody %}
+  <div class="row">
+    <div class="col-md-12">
+      <section class="content-header">
+        <h1>
+          Gestion de recursos
+          <small>Editor de control</small>
+        </h1>
+      </section>
+    </div>
+  </div>
+  <section class="content">
+    <form id="formmodif" name="formmodif">
+      <input type="hidden" name="id_proyecto" id="id_proyecto" value="{{db_modificar.id_proyecto}}">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Datos actividad</h3>
+            </div>
+            <div class="box-body">
+              <div class="col-md-3">
+                <label>id de proyecto:</label><input type="text" name="txtidproyecto" id="txtidproyecto" value="{{db_modificar.num_proyecto}}" class="form-control" readonly>
+              </div>
+              <div class="col-md-3">
+                <label>Zona:</label><input type="text" name="cmblocalidades" id="cmblocalidades" value="{{db_modificar.descripcion}}" class="form-control" readonly>
+                <input type="hidden" id="textlocalidades" name="textlocalidades" value="{{db_modificar.cod_localidad}}">
+              </div>
+              <div class="col-md-3">
+                <label for="cmbtipotrabajo">Tipo trabajo</label>
+                  <input type="text" name="cmbtipotrabajo" id="cmbtipotrabajo" value='{{db_modificar.areas}}' class="form-control" readonly='readonly'>
+              </div>
+              <div class="col-md-3">
+                <label>SOLICITANTE</label><input type="text" name="txtsolicitante" id="txtsolicitante" class="form-control" value="{{ owner_user['name'] }}" readonly="readonly">
+              </div>
+              <div class="col-md-6">
+                <label>Descripcion de proyecto</label><input type="text" name="txtdetalle" id="txtdetalle" class="form-control" value="{{db_modificar.descrip_proyecto}}">
+              </div>
+              <div class="col-md-3">
+                <label>Nodo Cuadrante</label><input type="text" name="txtnodo" id="txtnodo" class="form-control" value="{{db_modificar.nodocuadrante}}">
+              </div>
+              <div class="col-md-12">
+                <br>
+              </div>
+              <div id="diveditarseleccion" name="diveditarseleccion" class="col-md-12">
+                <div class="col-md-2">
+                </div>
+                  <div class="col-md-2">
+                    <h4><label>SELECCION</label></h4>
+                  </div>
+                  <div class="col-md-2">
+                    {% if db_modificar.principal == '1' %}
+                      <h4><label><input type="checkbox" name="checkeditarviatico" id="checkeditarviatico"  disabled='true' checked='checked'>VIATICO<label></h4>
+                    {% else %}
+                      {% if db_modificar.viatico == true %}
+                      <h4><label><input type="checkbox" name="checkeditarviatico" id="checkeditarviatico" onclick="editaropcion(1)" checked='checked' >VIATICO<label></h4>
+                      {% else %}
+                      <h4><label><input type="checkbox" name="checkeditarviatico" id="checkeditarviatico" onclick="editaropcion(1)">VIATICO<label></h4>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                  <div class="col-md-2">
+                      {% if db_modificar.principal == '2' %}
+                      <h4><label><input type="checkbox" name="checkeditartransporte" id="checkeditartransporte" disabled='true' checked='checked'>TRANSPORTE</label></h4>
+                      {% else %}
+                        {% if db_modificar.pasaje == true %}
+                        <h4><label><input type="checkbox" name="checkeditartransporte" id="checkeditartransporte" onclick="editaropcion(2)" checked='checked'>TRANSPORTE</label></h4>
+                        {% elseif db_modificar.movil == true %}
+                        <h4><label><input type="checkbox" name="checkeditartransporte" id="checkeditartransporte" onclick="editaropcion(2)" checked='checked'>TRANSPORTE</label></h4>
+                        {% else %}
+                        <h4><label><input type="checkbox" name="checkeditartransporte" id="checkeditartransporte" onclick="editaropcion(2)">TRANSPORTE</label></h4>
+                        {% endif %}
+                      {% endif %}
+                  </div>
+                  <div class="col-md-2">
+                    {% if db_modificar.principal == '3' %}
+                      <h4><label><input type="checkbox" name="checkeditarhospedaje" id="checkeditarhospedaje" disabled='true' checked='checked'>HOSPEDAJE</label></h4>
+                    {% else %}
+                      {% if db_modificar.hospedaje == true %}
+                      <h4><label><input type="checkbox" name="checkeditarhospedaje" id="checkeditarhospedaje" onclick="editaropcion(3)" checked='checked'>HOSPEDAJE</label></h4>
+                      {% else %}
+                      <h4><label><input type="checkbox" name="checkeditarhospedaje" id="checkeditarhospedaje" onclick="editaropcion(3)">HOSPEDAJE</label></h4>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                  <input type="hidden" name="idcount" id="idcount" value="3">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+      {% if db_modificar.viatico != '0' %}
+       {% if db_modificar.principal == '1' %}
+        <div class="col-md-12" id="divviatico" name="divviatico">
+          <div class='box'>
+                <div class='box-header'>
+                  <h3 class='box-title'>Viatico</h3>
+                </div>
+                <div class='box-body'>
+                  <div class='col-md-4'>
+                    <label>INICIO:</label><input type='DATE' name='txtinicio' id='txtinicio' class='form-control' VALUE='{{db_modificar.fecha_inicio}}'>
+                  </div>
+                  <div class='col-md-4'>
+                    <label>TERMINO:</label><input type='DATE' name='txtfinal' id='txtfinal' onfocusout='modificardatos()' class='form-control'  VALUE='{{db_modificar.fecha_final}}'>
+                  </div>
+                  <div class='col-md-4'>
+                    <label>DIAS:</label><input type='text' name='txtdias' id='txtdias' class='form-control' value='{{db_modificar.cant_dias}}'>
+                  </div>
+                  <div class='col-md-2'>
+                  <br>
+                  <a class='btn btn-success' id='seleccionar' name='seleccionar' onclick='seleccionar(1)' title='Seleccionar' data-toggle='tooltip'>
+                   Seleccionar Personal
+                  </a>
+                  </div>
+                  <div class='col-md-3'>
+                      <label>Cantidad Personas</label><input type='number' name='txtpersonal' id='txtpersonal' class='form-control' value="{{db_cant_usuarios}}">
+                  </div>
+                  <div class='col-md-3'>
+                      <label>MONTO VIATICO P/P</label><input type='number' name='txtviatico' id='txtviatico' value='{{db_detalleviatico}}' class='form-control' readonly='readonly'>
+                  </div>
+                  <div class='col-md-4'>
+                      <label>TOTAL VIATICOsssss</label><input type='number' name='txtrest' id='txtrest' value='{{total_viatico}}' class='form-control total'>
+                      <br>
+                  </div>
+                  <div class="col-md-12">
+
+                  </div>
+                  <div class="col-md-12" id="divpersonal" name="divpersonal">
+                    <div class='box'>
+                      <table id='tblpersonal' name='tblpersonal' class='table table-bordered table-responsive'>
+                      <thead>
+                          <tr>
+                              <th>RUT</th>
+                              <th>NOMRE</th>
+                              <th>CARGO</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        {% set No = 1 %}
+                        {% for usv in db_usuviatico if false != db_usuviatico %}
+                        <td>{{ usv.rut_personal }}</td>
+                        <td>{{ usv.nombre_personal}}</td>
+                        <td>{{ usv.cargo_personal}}</td>
+                      </tr>
+                        {% set No = No + 1 %}
+                        {% endfor %}
+                      </tbody>
+                      </table>
+                  </div>
+              </div>
+            </div>
+        </div>
+      </div>
+            {% else %}
+            <div class="col-md-12" id="divviatico" name="divviatico">
+            <div class='box'>
+                    <div class='box-header'>
+                    <h3 class='box-title'>Viatico</h3>
+                    </div>
+                  <div class='box-body'>
+                    <div class='col-md-4'>
+                      <label>DIAS VIATICO:</label><input type='number' name='txtdias' id='txtdias' class='form-control' value='{{db_modificar.cant_dias}}'>
+                    </div>
+                    <div class='col-md-4'>
+                        <label>MONTO VIATICO P/P</label><input type='text' name='txtviatico' id='txtviatico' value='{{db_detalleviatico}}' class='form-control' readonly='readonly'>
+                    </div>
+                    <div class='col-md-4'>
+                        <label>TOTAL VIATICOaaaaaaa</label><input type='number' name='txtrest' value='{{total_viatico}}' id='txtrest' class='form-control total'>
+                        <br>
+                    </div>
+                      <div class='col-md-12' id='divpersonal' name='divpersonal'></div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="col-md-12" id="divviatico" name="divviatico"></div>
+        {% endif %}
+       <input type="hidden" name="contador2" id="contador2" value="{{db_cant_usuarios}}">
+      </div>
+      <div class="row">
+        {% if db_modificar.pasaje != false  %}
+           {% if db_modificar.principal == '2'%}
+           <div class="col-md-12" id="divtransporte" name="divtransporte">
+                 {% if db_modificar.id_detalletransporte == db_modificar.num_proyecto %}
+                                  {% if db_tipo_transporte == '1' %}
+                                       <div class='box'>
+                                               <div class='box-header'>
+                                               <h3 class='box-title'>Transporte BUS</h3>
+                                               </div>
+                                             <div class='box-body'>
+                                               <div class='col-md-4'>
+                                                 <label>IDA:</label><input type='DATE' name='txtinicio' id='txtinicio' class='form-control' VALUE='{{db_modificar.fecha_inicio}}'>
+                                               </div>
+                                               <div class='col-md-4'>
+                                                 <label>VUELTA:</label><input type='DATE' name='txtfinal' id='txtfinal'  onfocusout='modificardatos()' class='form-control'  VALUE='{{db_modificar.fecha_final}}'>
+                                               </div>
+                                               <div class='col-md-4'>
+                                               <!--<input type='hidden' name='txtdias' id='txtdias'  value='{{db_modificar.cant_dias}}' class='form-control'>-->
+                                               </div>
+                                               <div class='col-md-4'>
+                                                   <label>Valor Pasaje Bus ida / vuelta</label><input type='number' name='txtcostopasaje' id='txtcostopasaje' onfocusout='recalcular()' value='{{db_precio_transporte}}' class='form-control'>
+                                               </div>
+                                               <div class='col-md-4'>
+                                               <br>
+                                               <a class='btn btn-success' id='seleccionar' name='seleccionar' onclick='seleccionar(2)' title='Seleccionar' data-toggle='tooltip'>
+                                                Seleccionar Personal
+                                               </a>
+                                               </div>
+                                               <div class='col-md-4'>
+                                               <label>Cantidad Personas</label><input type='Number' name='txtpersonal' id='txtpersonal' value="{{db_cant_usuarios}}" class='form-control'>
+                                                </div>
+                                               <div class='col-md-4'>
+                                                   <label>Total transporte</label><input type='number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total'>
+                                               </div>
+                                               <div class='col-md-12' id='divpersonaltransporte' name='divpersonaltransporte'></div>
+                                               <input type='hidden' id='txtopcion' name='txtopcion' value='1'>
+                                           </div>
+                                         </div>
+                                     {% elseif db_tipo_transporte == '2'%}
+                                     <div class='box'>
+                                             <div class='box-header'>
+                                             <h3 class='box-title'>Transporte AVION</h3>
+                                             </div>
+                                             <div class='box-body'>
+                                             <div class='col-md-4'>
+                                               <label>IDA:</label><input type='DATE' name='txtinicio' id='txtinicio'  class='form-control' VALUE='{{db_modificar.fecha_inicio}}'>
+                                             </div>
+                                             <div class='col-md-4'>
+                                               <label>VUELTA:</label><input type='DATE' name='txtfinal' id='txtfinal' onfocusout='modificardatos()' class='form-control'  VALUE='{{db_modificar.fecha_final}}'>
+                                             </div>
+                                             <div class='col-md-4'>
+                                                 <label>Valor Pasaje Avion</label><input type='Number' name='txtcostopasaje' id='txtcostopasaje' value='{{db_precio_transporte}}' onfocusout='recalcular()'  class='form-control'>
+                                             </div>
+                                             <div class='col-md-4'>
+                                             <br>
+                                             <a class='btn btn-success' id='seleccionar' name='seleccionar' onclick='seleccionar(2)' title='Seleccionar' data-toggle='tooltip'>
+                                              Seleccionar Personal
+                                             </a>
+                                             </div>
+                                             <div class='col-md-4'>
+                                                 <label>Cantidad Personas</label><input type='Number' name='txtpersonal' id='txtpersonal' value="{{db_cant_usuarios}}" class='form-control'>
+                                             </div>
+                                             <div class='col-md-4'>
+                                                 <label>Total transporte</label><input type='number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total'>
+                                                <br>
+                                             </div>
+                                             <input type='hidden' id='textprincipal' name='textprincipal' value='2'>
+                                             <div class='col-md-12' id='divpersonaltransporte' name='divpersonaltransporte'></div>
+                                                <!-- <input type='hidden' name='txtdias' id='txtdias'  value='{{db_modificar.cant_dias}}' class='form-control' >-->
+                                                 <input type='hidden' id='txtopcion' name='txtopcion' value='2'>
+                                           </div>
+                                       </div>
+                                   {% else %}
+                                         <div class='box'>
+                                                 <div class='box-header'>
+                                                 <h3 class='box-title'>Transporte MOVIL</h3>
+                                                 </div>
+                                                 <div class='box-body'>
+                                                   <div class='col-md-4'>
+                                                     <label>IDA:</label><input type='DATE' name='txtinicio' id='txtinicio'  class='form-control' VALUE='{{db_modificar.fecha_inicio}}'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                     <label>VUELTA:</label><input type='DATE' name='txtfinal' id='txtfinal'  onfocusout='modificardatos()' class='form-control'  VALUE='{{db_modificar.fecha_final}}'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                       <label>Monto para peajes</label><input type='Number' name='txtmontopeaje' id='txtmontopeaje' value='' onfocusout=calcularmovil() class='form-control'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                   <br>
+                                                   <a class='btn btn-success' id='seleccionar' name='seleccionar' onclick='seleccionar(2)' title='Seleccionar' data-toggle='tooltip'>
+                                                    Seleccionar Personal
+                                                   </a>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                       <label>Cantidad Personas</label><input type='Number' name='txtpersonal' id='txtpersonal' value="{{db_cant_usuarios}}" class='form-control'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                       <label>Numero de Moviles</label><input type='Number' name='txtcantmovil' id='txtcantmovil' onfocusout='calcularmovilychofer()' class='form-control'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                       <label>Cantidad peaje</label><input type='Number' name='txtpeajes' id='txtpeajes' value='' class='form-control'>
+                                                   </div>
+                                                   <div class='col-md-4'>
+                                                       <label>Total transporte</label><input type='Number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total'>
+                                                       <br>
+                                                   </div>
+                                                   <div class="col-md-12" id="divmovil" name="divmovil">
+                                                     <div class='box'>
+                                                        <table id='tblchofer' name='tblchofer' class='table table-bordered table-responsive'>
+                                                        <thead>
+                                                          <th>CHOFER</th>
+                                                          <th>RUT</th>
+                                                          <th>NOMBRE</th>
+                                                          <th>CARGO</th>
+                                                        </thead>
+                                                        <tbody>
+                                                           <tr>
+                                                             {% set No = 0 %}
+                                                             {% for mod in db_mod_chof if false != db_mod_chof %}
+                                                             {% if mod.chofer == '1' %}
+                                                             <td><input type='checkbox' name='checkchof{{mod.cod_personal}}' id='checkchof{{mod.cod_personal}}' onclick="marcar({{mod.cod_personal}})" checked=checked></td>
+                                                             {% set No = No + 1 %}
+                                                             {% else %}
+                                                             <td><input type='checkbox' name='checkchof{{mod.cod_personal}}' id='checkchof{{mod.cod_personal}}' disabled='true'></td>
+                                                             {% endif %}
+                                                             <td>{{ mod.rut_personal }}</td>
+                                                             <td>{{ mod.nombre_personal}}</td>
+                                                             <td>{{ mod.cargo_personal}}</td>
+                                                           </tr>
+
+                                                             {% endfor %}
+
+                                                           </tr>
+                                                         </tbody>
+                                                       </table>
+                                                       </div>
+                                                   </div>
+                                                     <input type='hidden' id='txtopcion' name='txtopcion' value='3'>
+                                                     <input type="hidden" name="txtnummovil" id="txtnummovil" value='{{No}}'>
+                                               </div>
+                                           </div>
+                                       {% endif %}
+                            {% endif %}
+                 </div>
+           {% else %}
+              <div class="col-md-12" id="divtransporte" name="divtransporte">
+                    {% if db_modificar.id_detalletransporte == db_modificar.num_proyecto %}
+                              {% if db_tipo_transporte == true %}
+                                     {% if db_tipo_transporte == '1' %}
+                                          <div class='box'>
+                                                  <div class='box-header'>
+                                                  <h3 class='box-title'>Transporte BUS</h3>
+                                                  &nbsp
+                                                  &nbsp
+                                                  <label><input type='radio' name='edrbopcion' id='edrbopcionbus' onchange='elegirtransporte(7)' checked='checked'>BUS</label>
+                                                  &nbsp
+                                                  <label><input type='radio' name='edrbopcion' id='edrbopcionavion' onchange='elegirtransporte(8)'>AVION</label>
+                                                  &nbsp
+                                                  <label><input type='radio' name='edrbopcion' id='edrbopcionmovil' onchange='elegirtransporte(9)'>MOVIL</label>
+                                                  </div>
+                                                <div class='box-body'>
+                                                  <div class='col-md-4'>
+                                                      <label>Valor Pasaje Bus ida / vuelta</label><input type='number' name='txtcostopasaje' id='txtcostopasaje' onfocusout='recalcular()' value='{{db_precio_transporte}}' class='form-control'>
+                                                  </div>
+                                                  <div class='col-md-4'>
+                                                      <label>Total transporte</label><input type='number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total'>
+                                                  </div>
+                                                  <input type='hidden' id='txtopcion' name='txtopcion' value='1'>
+                                              </div>
+                                            </div>
+                                        {% else %}
+                                            <div class='box'>
+                                                    <div class='box-header'>
+                                                    <h3 class='box-title'>Transporte AVION</h3>
+                                                    &nbsp
+                                                    &nbsp
+                                                    <label><input type='radio' name='edrbopcion' id='edrbopcionbus' onchange='elegirtransporte(7)'>BUS</label>
+                                                    &nbsp
+                                                    <label><input type='radio' name='edrbopcion' id='edrbopcionavion' onchange='elegirtransporte(8)' checked='checked'>AVION</label>
+                                                    &nbsp
+                                                    <label><input type='radio' name='edrbopcion' id='edrbopcionmovil' onchange='elegirtransporte(9)'>MOVIL</label>
+                                                    </div>
+                                                    <div class='box-body'>
+                                                      <div class='col-md-4'>
+                                                          <label>Valor Pasaje Avion ida / vuelta</label><input type='number' name='txtcostopasaje' id='txtcostopasaje' onfocusout='recalcular()' value='{{db_precio_transporte}}' class='form-control av'>
+                                                      </div>
+                                                      <div class='col-md-4'>
+                                                          <label>Total transporte</label><input type='number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total'>
+                                                      </div>
+                                                        <input type='hidden' id='txtopcion' name='txtopcion' value='2'>
+                                                  </div>
+                                              </div>
+                                      {% endif %}
+                                  {% else %}
+
+                                {% endif %}
+                      {% endif %}
+                    </div>
+
+                  {% endif %}
+            {% elseif db_modificar.movil != false %}
+               {% if db_modificar.principal != '2'%}
+                    <div class="col-md-12" id="divtransporte" name="divtransporte">
+                    <div class='box'>
+                            <div class='box-header'>
+                            <h3 class='box-title'>Transporte MOVIL</h3>
+                            &nbsp
+                            &nbsp
+                            <label><input type='radio' name='edrbopcion' id='edrbopcionbus' onchange='elegirtransporte(7)'>BUS</label>
+                            &nbsp
+                            <label><input type='radio' name='edrbopcion' id='edrbopcionavion' onchange='elegirtransporte(8)'>AVION</label>
+                            &nbsp
+                            <label><input type='radio' name='edrbopcion' id='edrbopcionmovil' onchange='elegirtransporte(9)' checked='checked'>MOVIL</label>
+                            </div>
+                            <div class='box-body'>
+
+                              <div class='col-md-4'>
+                                  <label>Numero de Moviles</label><input type='number' name='txtcantmovil' id='txtcantmovil' onfocusout='calcularmovilychofer()' class='form-control' value="{{db_cantidad_movil}}">
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Cantidad peaje</label><input type='number' name='txtpeajes' id='txtpeajes' class='form-control' value="{{db_cantidad_peaje}}">
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Monto para peajes</label><input type='number' name='txtmontopeaje' id='txtmontopeaje' class='form-control' value="{{db_cantidad_monto}}">
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Total transporte</label><input type='number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total' >
+                              <br>
+                              </div>
+                              <div class="col-md-12" id="divmovil" name="divmovil">
+                                <div class='box'>
+                                   <table id='tblchofer' name='tblchofer' class='table table-bordered table-responsive'>
+                                   <thead>
+                                     <th>CHOFER</th>
+                                     <th>RUT</th>
+                                     <th>NOMBRE</th>
+                                     <th>CARGO</th>
+                                   </thead>
+                                   <tbody>
+                                      <tr>
+                                        {% set No = 0 %}
+                                        {% for mod in db_mod_chof if false != db_mod_chof %}
+                                        {% if mod.chofer == '1' %}
+                                        <td><input type='checkbox' name='checkchof{{mod.cod_personal}}' id='checkchof{{mod.cod_personal}}' onclick="marcar({{mod.cod_personal}})" checked=checked></td>
+                                        {% set No = No + 1 %}
+                                        {% else %}
+                                        <td><input type='checkbox' name='checkchof{{mod.cod_personal}}' id='checkchof{{mod.cod_personal}}' disabled='true'></td>
+                                        {% endif %}
+                                        <td>{{ mod.rut_personal }}</td>
+                                        <td>{{ mod.nombre_personal}}</td>
+                                        <td>{{ mod.cargo_personal}}</td>
+                                      </tr>
+
+                                        {% endfor %}
+
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  </div>
+                              </div>
+                                <input type='hidden' id='txtopcion' name='txtopcion' value='3'>
+                                <input type="hidden" name="txtnummovil" id="txtnummovil" value='{{No}}'>
+                          </div>
+                      </div>
+                    </div>
+                    {% else %}
+                    <div class="col-md-12" id="divtransporte" name="divtransporte">
+                    <div class='box'>
+                            <div class='box-header'>
+                            <h3 class='box-title'>Transporte MOVIL</h3>
+                            </div>
+                            <div class='box-body'>
+                              <div class='col-md-4'>
+                                <label>IDA:</label><input type='DATE' name='txtinicio' id='txtinicio'  class='form-control' VALUE='{{db_modificar.fecha_inicio}}'>
+                              </div>
+                              <div class='col-md-4'>
+                                <label>VUELTA:</label><input type='DATE' name='txtfinal' id='txtfinal'  onfocusout='modificardatos()' class='form-control'  VALUE='{{db_modificar.fecha_final}}'>
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Monto para peajes</label><input type='Number' name='txtmontopeaje' id='txtmontopeaje' value="{{db_cantidad_monto}}" onfocusout=calcularmovil() class='form-control'>
+                              </div>
+                              <div class='col-md-4'>
+                              <br>
+                              <a class='btn btn-success' id='seleccionar' name='seleccionar' onclick='seleccionar(2)' title='Seleccionar' data-toggle='tooltip'>
+                               Seleccionar Personal
+                              </a>
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Cantidad Personas</label><input type='Number' name='txtpersonal' id='txtpersonal' value="{{db_cant_usuarios}}" class='form-control'>
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Numero de Moviles</label><input type='Number' name='txtcantmovil' id='txtcantmovil' onfocusout='calcularmovilychofer()'  value="{{db_cantidad_movil}}" class='form-control'>
+                              </div>
+                              <div class='col-md-4'>
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Cantidad peaje</label><input type='Number' name='txtpeajes' id='txtpeajes'  value="{{db_cantidad_peaje}}" class='form-control'>
+                              </div>
+                              <div class='col-md-4'>
+                                  <label>Total transporte</label><input type='Number' name='txttotaltransportes' id='txttotaltransportes' class='form-control total'>
+                                  <br>
+                              </div>
+                              <div class="col-md-12" id="divmovil" name="divmovil">
+                                <div class='box'>
+                                   <table id='tblchofer' name='tblchofer' class='table table-bordered table-responsive'>
+                                   <thead>
+                                     <th>CHOFER</th>
+                                     <th>RUT</th>
+                                     <th>NOMBRE</th>
+                                     <th>CARGO</th>
+                                   </thead>
+                                   <tbody>
+                                      <tr>
+                                        {% set No = 0 %}
+                                        {% for mod in db_mod_chof if false != db_mod_chof %}
+                                        {% if mod.chofer == '1' %}
+                                        <td><input type='checkbox' name='checkchof{{mod.cod_personal}}' id='checkchof{{mod.cod_personal}}' onclick="marcar({{mod.cod_personal}})" checked=checked></td>
+                                        {% set No = No + 1 %}
+                                        {% else %}
+                                        <td><input type='checkbox' name='checkchof{{mod.cod_personal}}' id='checkchof{{mod.cod_personal}}' disabled='true'></td>
+                                        {% endif %}
+                                        <td>{{ mod.rut_personal }}</td>
+                                        <td>{{ mod.nombre_personal}}</td>
+                                        <td>{{ mod.cargo_personal}}</td>
+                                      </tr>
+
+                                        {% endfor %}
+
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  </div>
+                              </div>
+                                <input type='hidden' id='txtopcion' name='txtopcion' value='3'>
+                                <input type="hidden" name="txtnummovil" id="txtnummovil" value='{{No}}'>
+                          </div>
+                      </div>
+                    </div>
+                    {% endif %}
+            {% else %}
+              <div class="col-md-12" id="divtransporte" name="divtransporte"></div>
+            {% endif %}
+
+
+
+      </div>
+       <div class="row">
+        {% if db_modificar.hospedaje != '0' %}
+           {% if db_modificar.principal != '3' %}
+        <div class="col-md-12" id="divhospedaje" name="divhospedaje">
+          {% if db_monto.rut_hospedaje != false %}
+               <div class='box'>
+                 <div class="box-body">
+                    <div class='box-header'>
+                       <h3 class='box-title'>Hospedaje</h3>
+                    </div>
+                    <br>
+                         <div class='col-md-4'>
+                           <label>Rut comercial</label><input type='text' name='txtrut' id='txtrut' class='form-control' value="{{db_monto.rut_hospedaje}}">
+                         </div>
+                         <div class='col-md-4'>
+                           <label>Nombre Residencial / Hotel </label><input type='text' name='txtcliente' id='txtcliente' class='form-control' value="{{db_monto.nombre_hospedaje}}">
+                         </div>
+                         <div class='col-md-4'>
+                           <label>Direccion:</label><input type='text' name='txtdireccion' id='txtdireccion' class='form-control' value="{{db_monto.direccion_hospedaje}}">
+                         </div>
+                         <div class='col-md-12'>
+                         <br>
+                         </div>
+                         <div class="col-md-12" id="tipohospedaje" name="tipohospedaje">
+                           {% set No = 1 %}
+                           {% for tipo in db_tipo_hospedaje if false != db_tipo_hospedaje %}
+                              {% set pasa = 0 %}
+                               {% for detalle in db_detalle_hospedaje if false != db_detalle_hospedaje %}
+                                  {% if tipo.cod_tipo == detalle.tipo_hospedaje %}
+                                    {% set pasa = 1 %}
+                                     <div class='col-md-2'>
+                                     <br>
+                                     <br>
+                                       <label><input type='checkbox' name='checktipo{{tipo.cod_tipo}}' id='checktipo{{tipo.cod_tipo}}' onclick='marcar_tipo_hospedaje({{tipo.cod_tipo}})'>&nbsp&nbsp{{tipo.tipo_habitacion}}</label>
+                                     </div>
+                                     <div class='col-md-2'>
+                                     <br>
+                                       <label>N° Habitaciones</label><input type='number' name='txthabitaciones{{tipo.cod_tipo}}' id='txthabitaciones{{tipo.cod_tipo}}' value='{{detalle.cant_habitaciones}}' onfocusout='calcular_total("{{tipo.cod_tipo}}")' class='form-control' disabled='true' >
+                                     </div>
+                                     <div class='col-md-2'>
+                                     <br>
+                                       <label>Personas por habitacion</label><input type='number' name='txtperp{{tipo.cod_tipo}}' id='txtperp{{tipo.cod_tipo}}' value='{{detalle.persoxhabi}}' onfocusout='sumapersonas("{{tipo.cod_tipo}}")'  class='form-control pr' disabled='true'>
+
+                                     </div>
+                                     <div class='col-md-2'>
+                                     <br>
+                                       <label>Costo por dia:</label><input type='number' name='txtcostoxdia{{tipo.cod_tipo}}' id='txtcostoxdia{{tipo.cod_tipo}}' onfocusout='validarhospedaje({{tipo.cod_tipo}})' value='{{detalle.costo_dia}}' class='form-control ' disabled='true' >
+                                     </div>
+                                     <div class='col-md-2'>
+                                     <br>
+                                       <label>Dias</label><input type='number' name='txtdia{{tipo.cod_tipo}}' id='txtdia{{tipo.cod_tipo}}' value='{{detalle.dias}}'  class='form-control' onfocusout='calcular_total({{tipo.cod_tipo}})' disabled='true'>
+                                     </div>
+                                     <div class='col-md-2'>
+                                     <br>
+                                       <label>Total:</label><input type='text'  name='txtcostototal{{tipo.cod_tipo}}' id='txtcostototal{{tipo.cod_tipo}}'  class='form-control cl' value='{{detalle.monto}}' disabled='true'>
+                                     </div>
+                                  {% endif %}
+                                {% endfor %}
+                                {% if pasa == 0  %}
+                                    <div class='col-md-2'>
+                                    <br>
+                                    <br>
+                                      <label><input type='checkbox' name='checktipo{{tipo.cod_tipo}}' id='checktipo{{tipo.cod_tipo}}' onclick='marcar_tipo_hospedaje({{tipo.cod_tipo}})'>&nbsp&nbsp{{tipo.tipo_habitacion}}</label>
+                                    </div>
+                                    <div class='col-md-2'>
+                                    <br>
+                                      <label>N° Habitaciones</label><input type='number' name='txthabitaciones{{tipo.cod_tipo}}' id='txthabitaciones{{tipo.cod_tipo}}' value='0' onfocusout='calcular_total("{{tipo.cod_tipo}}")' class='form-control ' disabled='true'>
+                                    </div>
+                                    <div class='col-md-2'>
+                                    <br>
+                                      <label>Personas por habitacion</label><input type='number' name='txtperp{{tipo.cod_tipo}}' id='txtperp{{tipo.cod_tipo}}' value='0' onfocusout='sumapersonas("{{tipo.cod_tipo}}")'  class='form-control pr' disabled='true'>
+
+                                    </div>
+                                    <div class='col-md-2'>
+                                    <br>
+                                      <label>Costo por dia:</label><input type='number' name='txtcostoxdia{{tipo.cod_tipo}}' id='txtcostoxdia{{tipo.cod_tipo}}' onfocusout='validarhospedaje({{tipo.cod_tipo}})' value='0' class='form-control ' disabled='true'>
+                                    </div>
+                                    <div class='col-md-2'>
+                                    <br>
+                                      <label>Dias</label><input type='number' name='txtdia{{tipo.cod_tipo}}' id='txtdia{{tipo.cod_tipo}}' value='0'  class='form-control' onfocusout='calcular_total({{tipo.cod_tipo}})' disabled='true'>
+                                    </div>
+                                    <div class='col-md-2'>
+                                    <br>
+                                      <label>Total:</label><input type='text'  name='txtcostototal{{tipo.cod_tipo}}' id='txtcostototal{{tipo.cod_tipo}}'  class='form-control cl' value='{{detalle.total_hospedaje}}' disabled='true'>
+                                    </div>
+                                {% endif %}
+                                {% set No = No + 1 %}
+                            {% endfor %}
+
+
+                        <input type='hidden' id='per' name='per'>
+                        <div class='col-md-8'></div>
+                                   <div class='col-md-2'>
+                                   <br>
+                                   <p>
+                                   <center>
+                                   <label>TOTAL</label>
+                                 </center></div>
+
+                              <div class='col-md-2'>
+                           <br>
+                           <input type='number' name='txtvalortotal' id='txtvalortotal' value='{{db_monto.total_hospedaje}}'  class='form-control total'>
+                           </div>
+
+
+                         <div class="col-md-12">
+                            <br>
+                            <br>
+                         </div>
+                         <div id='costohospedaje' name='costohospedaje'>
+                               <div class='col-md-3'>
+                               <br>
+                                 <label><input type='checkbox' name='checkpago' id='checkpago' onclick='modificarporcentaje()'>Modificar porcentaje de pago </label>
+                               </div>
+                               <div class='col-md-3'>
+                                 <label>PORCENTAJE DE PAGO %</label><input type='number' name='txtpago' step='0.01' id='txtpago' onfocusout='validarporcentaje();' class='form-control' value='{{db_monto.porcentaje}}' disabled='true'>
+
+                               </div>
+                               <div class='col-md-3'>
+                                 <label>SUB TOTAL</label><input type='number' name='txtsubtotal' id='txtsubtotal' value='{{db_monto.total_hospedaje}}' class='form-control' disabled='true'>
+                               </div>
+                               <div class='col-md-3'>
+                                 <label>MONTO TOTAL A PAGAR</label><input type='number' name='texttotalhos' id='texttotalhos' class='form-control' value='{{(db_monto.total_hospedaje * db_monto.porcentaje)/'100'}}' disabled='true'>
+                               </div>
+                               <input type="hidden" id="txtestado" name="txtestado" value="0">
+                         </div>
+                     </div>
+                  </div>
+            </div>
+            {% else %}
+            {% endif %}
+          </div>
+             {% else %}
+             <div class='box'>
+                     <div class='box-header'>
+                     <h3 class='box-title'>Hospedaje</h3>
+                     </div>
+                   <div class='box-body'>
+                     <div class='col-md-4'>
+                       <label>INICIO:</label><input type='DATE' name='txtinicio' id='txtinicio' class='form-control' VALUE='{{db_modificar.fecha_inicio}}'>
+                     </div>
+                     <div class='col-md-4'>
+                       <label>TERMINO:</label><input type='DATE' name='txtfinal' id='txtfinal'  onfocusout='calc_dias_hospedaje()' class='form-control'  VALUE='{{db_modificar.fecha_final}}'>
+                     </div>
+                     <div class='col-md-4'>
+                       <label>CANTIDAD DE DIAS:</label><input type='number' name='txtdiashospedaje' id='txtdiashospedaje' class='form-control' VALUE='{{db_modificar.cant_dias_hospedaje}}'>
+                     </div>
+                     <div class='col-md-4'>
+                       <label>Rut comercial</label><input type='text' name='txtrut' id='txtrut' class='form-control' VALUE='{{db_monto.rut_hospedaje}}'>
+                     </div>
+                     <div class='col-md-4'>
+                       <label>Nombre Residencial / Hotel </label><input type='text' name='txtcliente' id='txtcliente' class='form-control' VALUE='{{db_monto.nombre_hospedaje}}'>
+                     </div>
+                     <div class='col-md-4'>
+                       <label>Direccion:</label><input type='text' name='txtdireccion' id='txtdireccion'  class='form-control' VALUE='{{db_monto.direccion_hospedaje}}'>
+                     </div>
+                     <div class='col-md-4'>
+                     <br>
+                     <a class='btn btn-success' id='seleccionar' name='seleccionar' onclick='seleccionar(3)' title='Seleccionar' data-toggle='tooltip'>
+                      Seleccionar Personal
+                     </a>
+                     </div>
+                     <div class='col-md-4'>
+                     <label>Cantidad Personas</label><input type='Number' name='txtpersonal' id='txtpersonal' value="{{db_cant_usuarios}}" class='form-control'>
+                     <br>
+                     </div>
+                     <div class='col-md-12'>
+                     <br>
+                     </div>
+                     <div class="col-md-12" id="tipohospedaje" name="tipohospedaje">
+                       {% set No = 1 %}
+                       {% for tipo in db_tipo_hospedaje if false != db_tipo_hospedaje %}
+                          {% set pasa = 0 %}
+                           {% for detalle in db_detalle_hospedaje if false != db_detalle_hospedaje %}
+                              {% if tipo.cod_tipo == detalle.tipo_hospedaje %}
+                                {% set pasa = 1 %}
+                                 <div class='col-md-2'>
+                                 <br>
+                                 <br>
+                                   <label><input type='checkbox' name='checktipo{{tipo.cod_tipo}}' id='checktipo{{tipo.cod_tipo}}' onclick='marcar_tipo_hospedaje({{tipo.cod_tipo}})'>&nbsp&nbsp{{tipo.tipo_habitacion}}</label>
+                                 </div>
+                                 <div class='col-md-2'>
+                                 <br>
+                                   <label>N° Habitaciones</label><input type='number' name='txthabitaciones{{tipo.cod_tipo}}' id='txthabitaciones{{tipo.cod_tipo}}' value='{{detalle.cant_habitaciones}}' onfocusout='calcular_total("{{tipo.cod_tipo}}")' class='form-control' disabled='true' >
+                                 </div>
+                                 <div class='col-md-2'>
+                                 <br>
+                                   <label>Personas por habitacion</label><input type='number' name='txtperp{{tipo.cod_tipo}}' id='txtperp{{tipo.cod_tipo}}' value='{{detalle.persoxhabi}}' onfocusout='sumapersonas("{{tipo.cod_tipo}}")'  class='form-control pr' disabled='true'>
+
+                                 </div>
+                                 <div class='col-md-2'>
+                                 <br>
+                                   <label>Costo por dia:</label><input type='number' name='txtcostoxdia{{tipo.cod_tipo}}' id='txtcostoxdia{{tipo.cod_tipo}}' onfocusout='validarhospedaje({{tipo.cod_tipo}})' value='{{detalle.costo_dia}}' class='form-control ' disabled='true' >
+                                 </div>
+                                 <div class='col-md-2'>
+                                 <br>
+                                   <label>Dias</label><input type='number' name='txtdia{{tipo.cod_tipo}}' id='txtdia{{tipo.cod_tipo}}' value='{{detalle.dias}}'  class='form-control' onfocusout='calcular_total({{tipo.cod_tipo}})' disabled='true'>
+                                 </div>
+                                 <div class='col-md-2'>
+                                 <br>
+                                   <label>Total:</label><input type='text'  name='txtcostototal{{tipo.cod_tipo}}' id='txtcostototal{{tipo.cod_tipo}}'  class='form-control cl' value='{{detalle.monto}}' disabled='true'>
+                                 </div>
+                              {% endif %}
+                            {% endfor %}
+                            {% if pasa == 0  %}
+                                <div class='col-md-2'>
+                                <br>
+                                <br>
+                                  <label><input type='checkbox' name='checktipo{{tipo.cod_tipo}}' id='checktipo{{tipo.cod_tipo}}' onclick='marcar_tipo_hospedaje({{tipo.cod_tipo}})'>&nbsp&nbsp{{tipo.tipo_habitacion}}</label>
+                                </div>
+                                <div class='col-md-2'>
+                                <br>
+                                  <label>N° Habitaciones</label><input type='number' name='txthabitaciones{{tipo.cod_tipo}}' id='txthabitaciones{{tipo.cod_tipo}}' value='0' onfocusout='calcular_total("{{tipo.cod_tipo}}")' class='form-control ' disabled='true'>
+                                </div>
+                                <div class='col-md-2'>
+                                <br>
+                                  <label>Personas por habitacion</label><input type='number' name='txtperp{{tipo.cod_tipo}}' id='txtperp{{tipo.cod_tipo}}' value='0' onfocusout='sumapersonas("{{tipo.cod_tipo}}")'  class='form-control pr' disabled='true'>
+
+                                </div>
+                                <div class='col-md-2'>
+                                <br>
+                                  <label>Costo por dia:</label><input type='number' name='txtcostoxdia{{tipo.cod_tipo}}' id='txtcostoxdia{{tipo.cod_tipo}}' onfocusout='validarhospedaje({{tipo.cod_tipo}})' value='0' class='form-control ' disabled='true'>
+                                </div>
+                                <div class='col-md-2'>
+                                <br>
+                                  <label>Dias</label><input type='number' name='txtdia{{tipo.cod_tipo}}' id='txtdia{{tipo.cod_tipo}}' value='0'  class='form-control' onfocusout='calcular_total({{tipo.cod_tipo}})' disabled='true'>
+                                </div>
+                                <div class='col-md-2'>
+                                <br>
+                                  <label>Total:</label><input type='text'  name='txtcostototal{{tipo.cod_tipo}}' id='txtcostototal{{tipo.cod_tipo}}'  class='form-control cl' value='{{detalle.total_hospedaje}}' disabled='true'>
+                                </div>
+                            {% endif %}
+                            {% set No = No + 1 %}
+                        {% endfor %}
+
+
+                    <input type='hidden' id='per' name='per'>
+                    <div class='col-md-8'></div>
+                               <div class='col-md-2'>
+                               <br>
+                               <p>
+                               <center>
+                               <label>TOTAL</label>
+                             </center></div>
+
+                          <div class='col-md-2'>
+                       <br>
+                       <input type='number' name='txtvalortotal' id='txtvalortotal' value='{{db_monto.total_hospedaje}}'  class='form-control total'>
+                       </div>
+                      </div>
+                      <div class="col-md-12">
+                         <br>
+                         <br>
+                      </div>
+                      <div id='costohospedaje' name='costohospedaje'>
+                            <div class='col-md-3'>
+                            <br>
+                              <label><input type='checkbox' name='checkpago' id='checkpago' onclick='modificarporcentaje()'>Modificar porcentaje de pago </label>
+                            </div>
+                            <div class='col-md-3'>
+                              <label>PORCENTAJE DE PAGO %</label><input type='number' name='txtpago' step='0.01' id='txtpago' onfocusout='validarporcentaje();' class='form-control' value='{{db_monto.porcentaje}}' disabled='true'>
+
+                            </div>
+                            <div class='col-md-3'>
+                              <label>SUB TOTAL</label><input type='number' name='txtsubtotal' id='txtsubtotal' value='{{db_monto.total_hospedaje}}' class='form-control' disabled='true'>
+                            </div>
+                            <div class='col-md-3'>
+                              <label>MONTO TOTAL A PAGAR</label><input type='number' name='texttotalhos' id='texttotalhos' class='form-control' value='{{(db_monto.total_hospedaje * db_monto.porcentaje)/'100'}}' disabled='true'>
+                            </div>
+                            <input type="hidden" id="txtestado" name="txtestado" value="0">
+                      </div>
+
+                 </div>
+               </div>
+             {% endif %}
+          {% else %}
+          <div class="col-md-12" id="divhospedaje" name="divhospedaje"></div>
+        {% endif %}
+        </div>
+      <div class='box'>
+              <div class='box-header'>
+              <label>GASTO TOTAL:</label><input type='text' name='txttotalcontrol' id='txttotalcontrol' value='{{db_modificar.costo_total}}'onChange="validarSiNumero(this.value)" class='form-control'>
+              </div>
+      </div>
+      <div class="col-md-12">
+        <br>
+        <br>
+        <div class="col-md-4"></div>
+        <input type="hidden" id="txttotal" name="txttotal">
+        <input type="hidden" id="totalxpersona" name="totalxpersona">
+        <div class="">
+          <button type="button" class="btn btn-primary col-md-2" id="btnmodificar" name="btnmodificar" onclick="modificar_control()">Modificar Control</button>
+        </div>
+        <br>
+      </div>
+    </form>
+  </section>
+{% include 'avar/modal_lista' %}
+{% endblock %}
+{% block appScript %}
+  <script src="views/app/js/test/test.js"></script>
+  <script>
+  //viatico
+
+
+  // //HOSPEDAJE
+  // try {
+  //   var dias=document.getElementById('txtcantidad').value;
+  //   var costopordia=document.getElementById('txtcostopordia').value;
+  //   var total_hospedaje=parseInt(dias)*parseInt(costopordia);
+  //   document.getElementById('txttotalhospedaje').value=total_hospedaje;
+  // } catch (e) {
+  //
+  // } finally {
+  //
+  // }
+  //
+  //
+  //
+  //
+  //bus
+  try {
+    var personal=document.getElementById('txtpersonal').value
+    document.getElementById('txtpersonal').value=personal;
+    var bus=document.getElementById('txtcostopasaje').value;
+    total_bus=parseInt(personal)*parseInt(bus);
+    document.getElementById('txttotaltransportes').value=total_bus;
+  } catch (e) {
+
+  } finally {
+    try {
+      document.getElementById('txtpersonal').value=personal
+    } catch (e) {
+
+    } finally {
+
+    }
+    try {
+      var cantmovil=document.getElementById('txtcantmovil').value;
+      var costomovil=document.getElementById('txtmontopeaje').value;
+      var total_transporte=parseInt(cantmovil)*parseInt(costomovil);
+      document.getElementById('txttotaltransportes').value=total_transporte;
+    } catch (e) {
+
+    } finally {
+
+    }
+
+
+  }
+
+
+  </script>
+
+{% endblock %}

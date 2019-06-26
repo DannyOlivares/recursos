@@ -1,0 +1,104 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+  <link rel="stylesheet" href="views/app/template/datatables/dataTables.bootstrap.css">
+{% endblock %}
+{% block appBody %}
+    <section class="content-header">
+        <h1>
+            Andes
+            <small>Listado de Tecnicos</small>
+          <a class="btn btn-primary btn-social pull-right" href="andes/nuevo_tecnico" title="Agregar" data-toggle="tooltip">
+            <i class="fa fa-plus"></i> Agregar
+          </a>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-primary">
+            <div class="box-body">
+            <table id="dataTablestecnicos" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Rut</th>
+                  <th>Nombres</th>
+                  <th>Telefono</th>
+                  <th>Zona</th>
+                  <th>EPS</th>
+                  <th>OPCIONES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% set No = 1 %}
+                {% for t in db_tecnicos if false != db_tecnicos %}
+                  <tr>
+                    <td>{{ No }}</td>
+                    <td>{{ t.rut }}</td>
+                    <td>{{ t.nombre|raw|title }}</td>
+                    <td>{{ t.telefono }}</td>
+                    <td>{{ t.zona }}</td>
+                    <td>{{ t.codigo_eps }}</td>
+                    <td class='center' width='80'>
+                      <a data-toggle='tooltip' data-placement='top' title='Modificar' class='btn btn-success btn-sm' href="despacho/editar_tecnico/{{ d.id_tecnicos }}">
+                      <i class='glyphicon glyphicon-edit'></i>
+                      </a>
+
+                      {% if d.estado == 0 %}
+                          <a data-toggle='tooltip' data-placement='top' title='Bloqueado' class='btn btn-warning btn-sm' href="despacho/estado_tecnico/{{ d.id_tecnicos }}">
+                          <i class='glyphicon glyphicon-off'></i>
+                          </a>
+
+                      {% else %}
+                          <a data-toggle='tooltip' data-placement='top' title='Activo' class='btn btn-danger btn-sm' href="despacho/estado_tecnico/{{ d.id_tecnicos }}">
+                          <i class='glyphicon glyphicon-check'></i>
+                          </a>
+
+                      {% endif %}
+
+                    </td>
+                  </tr>
+                  {% set No =  No + 1 %}
+                {% endfor %}
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+
+{% endblock %}
+{% block appScript %}
+    <!-- DATA TABES SCRIPT -->
+    <script src="views/app/template/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="views/app/template/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+
+    <script src="views/app/js/despacho/tecnicos.js"></script>
+
+    <script>
+     $("#dataTablestecnicos").dataTable({
+                "language": {
+                    "search": "Buscar:",
+                    "zeroRecords": "No hay datos para mostrar",
+                    "info":"Mostrando _END_ Registros, de un total de _TOTAL_ ",
+                    "loadingRecords": "Cargando...",
+                    "processing":"Procesando...",
+                    "infoEmpty":"No hay entradas para mostrar",
+                    "lengthMenu": "Mostrar _MENU_ Filas",
+                    "paginate":{
+                      "first":"Primera",
+                      "last":"Ultima",
+                      "next":"Siguiente",
+                      "previous":"Anterior",
+                    }
+                              },
+                "autoWidth": true,
+                "scrollX": true
+            });
+    </script>
+
+{% endblock %}

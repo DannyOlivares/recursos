@@ -1,0 +1,60 @@
+{% extends 'portal/portal' %}
+
+{% block appBody %}
+<section class="content-header">
+    <h1>
+        Despacho
+        <small>Ordenes</small>
+    </h1>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body col-sm-6">
+                    <div class="form-group">
+                        <form id="formordenes" name="formordenes">
+                            <input class='filestyle' data-buttonText="Logo" type="file" name="imagefile" id="imagefile" onchange="document.getElementById('archivo').value=document.getElementById('imagefile').value" tabindex="-1" style="position:absolute; clip: rect(0px 0px 0px 0px);" accept="file_extension|image/*|media_type">
+                            <div class="bootstrap-filestyle input-group">
+                                <input type="text" class="form-control" id="archivo" placeholder="" disabled="">
+                                <span class="group-span-filestyle input-group-btn" tabindex="0">
+                                    <label for="imagefile" class="btn btn-default ">
+                                    <span class="icon-span-filestyle glyphicon glyphicon-share"></span>
+                                    <span class="buttonText">Buscar Archivo</span>
+                                    </label>
+                                </span>
+                            </div>
+                            <div id="div_cargando" name="div_cargando">
+                                <a class="btn btn-success btn-social" title="Importar Excel" data-toggle="tooltip" onclick="cargaordenes()">
+                                    <i class="fa fa-arrow-up"></i> Cargar Ordenes
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="box-body col-sm-6">
+                    <span><b>Formato de Archivo</b>
+                    <p>Col A -> Orden de trabajo</p>
+                    <p>Col B -> Tipo actividad</p>
+                    <p>Col C -> Franja</p>
+                    <p>Col D -> Cliente</p>
+                    <p>Col E -> Direccion</p>
+                    <p>Col F -> Ciudad</p>
+                    <p>Col G -> Rut cliente</p>
+                    <p>Col H -> Numero telefono</p>
+                    <p>Col I -> Numero Orden</p>
+                    <p>Col J -> Estado</p>
+                    <p>Col K -> Territorio</p>
+                    <p>Col L -> Zona de trabajo</p>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block appScript %}
+    <script src="views/app/js/andes/andes.js"></script>
+{% endblock %}

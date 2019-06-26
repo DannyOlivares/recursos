@@ -1,0 +1,58 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}{% endblock %}
+{% block appBody %}
+    <section class="content-header">
+        <h1>
+          Personal
+            <small>Nuevo Personal</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">
+                    <i class="fa fa-home"></i>
+                    Home</a>
+            </li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <form id="formperso" action="" method="POST">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                Rut
+                                <input class="form-control" name="txtrutpersonal" id="txtrutpersonal" type="text" placeholder="99999999-9" required="required"/>
+                                NOMBRE
+                                <input class="form-control" name="txtnombrepersonal" id="txtnombrepersonal" type="text" placeholder="Nombre" required="required"/>
+                                EMAIL
+                                <input class="form-control" name="txtemailpersonal" id="txtemailpersonal" type="text" placeholder="nombre@email.com" required="required"/>
+                                Area
+                                <select id="cmbarea" name="cmbarea" class="form-control">
+                                  <option value="0">--</option>
+                                  {% for a in db_area if false != db_area %}
+                                    <option value="{{a.cod_area}}">{{a.descripcion}}</option>
+                                  {% endfor %}
+                                </select>
+                                Cargo
+                                <input class="form-control" name="txtcargopersonal" id="txtcargopersonal" type="text" placeholder="ej:Soporte" required="required"/>
+                            </div>
+                        <div class="col-md-12">
+                          <div class="col-md-4">
+                          </div>
+                          <button type="button" class="btn btn-primary" id="btnguardarpersonal" onclick="guardarpersonal()" name="btnguardarpersonal">GUARDAR Personal</button>
+                        </div>
+                      </div>
+                    </form>
+            </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}
+{% block appScript %}
+    <script src="views/app/js/personal/personal.js"></script>
+{% endblock %}

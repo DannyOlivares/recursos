@@ -1,0 +1,45 @@
+# This file is part of the Ocrend Framewok 2 package.
+#
+# (c) Ocrend Software <info@ocrend.com>
+#
+# For the full copyright and license information, please view the LICENS
+# file that was distributed with this source code.
+
+# Conexión con la base de datos principal
+database:
+  host: localhost
+  user: root
+  pass: esteesmisistema
+  name: recursos
+  port: 1521
+  protocol: TCP
+  motor: mysql
+
+# Configuración de servidor SMTP
+phpmailer:
+  host: mail.rematefletes.com
+  user: jjara@rematefletes.com
+  pass: kr10770wys
+  SMTPSecure: tls
+  port: 25
+
+# Configuración de sesiones
+sessions:
+  unique: 1N4WYS2018
+  life_time: 21600
+
+# Variables del framework
+framework:
+  debug: false
+  version: 2.0.2
+
+# Configuración del sitio
+site:
+  name: PLATAFORMA DE CONTROL PRESUPUESTARIO
+  author: Danny Olivares Quinteros.
+  author_email: dolivares.quinteros@gmail.com
+  timezone: America/Santiago
+  url: http://localhost:8080/recursos/
+  router:
+    path: localhost:8080/recursos/
+    protocol: http

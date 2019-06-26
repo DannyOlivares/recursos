@@ -1,0 +1,21 @@
+if($resultados==false){
+  $html="  <br>
+         <div class='form-group>
+         <label for='txtmontobus>Valor maximo pasaje bus</label>
+         <input type='text' class='form-control' name='txtmontobus' id='txtmontobus'>
+       <br>
+      </div>";
+
+      return array('success' => '1', 'html'=>$html);
+      var_dump($html);
+}else{
+
+$html="<br>
+     <div class='form-group'>
+         <label for='txtmontovuelo'>Valor maximo pasaje bus</label>
+         <input type='text' class='form-control' name='txtmontoavion' id='txtmontoavion' value='".$resultados."'>
+       <br>
+    </div>";
+
+  return array('success' => '1','html'=>$html);
+}

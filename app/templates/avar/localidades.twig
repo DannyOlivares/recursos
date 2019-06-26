@@ -1,0 +1,121 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+  <link rel="stylesheet" href="views/app/template/datatables/dataTables.bootstrap.css">
+  <style media="screen">
+    .at{
+      display: none;
+    }
+  </style>
+{% endblock %}
+{% block appBody %}
+<div class="row">
+    <div class="col-md-12">
+        <section class="content-header">
+            <h1>
+                Localidades
+
+                <div class="pull-right">
+                        <small>
+                        <div class="pull-right" id="divopciones_fen" name="divopciones_fen">
+                          <a class="btn btn-primary" id="btn_exporta_excel" href="avar/nueva_localidad" title="Nueva Actividad" data-toggle="tooltip">
+                              Nueva Localidad
+                          </a>
+                        </div>
+                    </small>
+                </div>
+            </h1>
+
+        </section>
+    </div>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="formordenesandes" name="formordenesandes">
+                      <div id="tblordenesandes" name="tblordenesandes">
+
+
+                        <table id="tablorden" name="tablorden" class="table table-bordered table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>CODIGO</th>
+                                    <th>LOCALIDAD</th>
+                                    <th>HUB</th>
+                                    <th>VIATICO</th>
+                                    <th>TRANSPORTE</th>
+                                    <th>HOSPEDAJE</th>
+                                    <th>OPCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% set No = 1 %}
+                              {% for l in db_localidades if false != db_localidades %}
+                                  <tr>
+                                      <td>{{ l.cod_localidad }}</td>
+                                      <td>{{ l.descripcion}}</td>
+                                      <td>{{ l.hub }}</td>
+                                      {% if l.viatico == '1' %}
+                                      <td>SI</td>
+                                      {% else %}
+                                      <td>NO</td>
+                                      {% endif %}
+                                      {% if l.transporte == '1' %}
+                                      <td>SI</td>
+                                      {% else %}
+                                      <td>NO</td>
+                                      {% endif %}
+                                      {% if l.hospedaje == '1' %}
+                                      <td>SI</td>
+                                      {% else %}
+                                      <td>NO</td>
+                                      {% endif %}
+                                      <td><a data-toggle='tooltip' data-placement='top' id="btnmodificarlocalidad" name="btnmodificarlocalidad" title='Modificar'  href="avar/editar_localidades/{{ l.id_localidad }}" class='btn btn-success btn-sm'>
+                                          <i class='glyphicon glyphicon-edit'></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' name="btnlisteliminarlocalidad" id="btnlisteliminarlocalidad" title="Eliminar" onclick="eliminarlocalidad({{ l.id_localidad }})" class='btn btn-danger btn-sm'>
+                                          <i class='glyphicon glyphicon-remove'></i>
+                                          </a>
+                                      </td>
+                                  </tr>
+                                  {% set No = No + 1 %}
+                              {% endfor %}
+                            </tbody>
+                        </table>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block appScript %}
+
+  <script src="views/app/template/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+  <script src="views/app/template/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+  <script src="views/app/js/localidades/localidades.js"></script>
+
+    <script>
+        $("#tablorden").dataTable({
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No hay datos para mostrar",
+                "info": "Mostrando _END_ Registros, de un total de _TOTAL_ ",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "infoEmpty": "No hay entradas para mostrar",
+                "lengthMenu": "Mostrar _MENU_ Filas",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "autoWidth": true,
+            "bSort": false,
+          "scrollX": true
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+  <link rel="stylesheet" href="views/app/template/datatables/dataTables.bootstrap.css">
+{% endblock %}
+{% block appBody %}
+<div class="row">
+    <div class="col-md-12">
+    <section class="content-header">
+        <h1>
+        Sistema
+            <small>Listar Usuarios Sistema</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">
+                    <i class="fa fa-home"></i>
+                    Home</a>
+            </li>
+        </ol>
+    </section>
+  </div>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="formsistema" name="formsistema">
+                      <div id="tblpersistema" name="tblpersistema">
+                        <table id="tblsistema" name="tblsistema" class="table table-bordered table-responsive">
+                          <thead>
+                              <tr>
+                                  <th>RUT</th>
+                                  <th>NOMBRE</th>
+                                  <th>EMAIL</th>
+                                  <th>CARGO</th>
+                                  <th>PERFIL</th>
+                                  <th>OPCIONES</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                            {% set No = 1 %}
+                            {% for u in db_usuarios if false != db_usuarios %}
+                                <tr>
+                                    <td>{{ u.rut_personal }}</td>
+                                    <td>{{ u.name}}</td>
+                                    <td>{{ u.email}}</td>
+                                    <td>{{ u.cargo}}</td>
+                                    <td>{{ u.perfil}}</td>
+                                    {% if u.estado == 1 %}
+                                    <td><a data-toggle='tooltip' data-placement='top' id="btnmodpersistema" name="btnmodpersistema" title='Modificar Usuario Sistema'  href="usuarios/editar_personal_sistema/{{ u.id_user }}" class='btn btn-success btn-sm'>
+                                        <i class='glyphicon glyphicon-edit'></i></a>
+                                        <a data-toggle='tooltip' data-placement='top' name="btnelipersistema" id="btnelipersistema" title="Desactivar Usuario Sistema" onclick="eliminarpersonal_sistema({{u.id_user }})" class='btn btn-danger btn-sm'>
+                                        <i class='glyphicon glyphicon-off'></i>
+                                        </a></td>
+                                    {% else %}
+                                    <td><a data-toggle='tooltip' data-placement='top' id="btnreactivarpersistema" name="btnreactivarpersistema" title='Reativar Usuario Sistema'  onclick="reactivarpersonal_sistema({{u.id_user }})" class='btn btn-warning btn-sm'>
+                                        <i class='glyphicon glyphicon-off'></i></a></td>
+                                    {% endif %}
+                                </tr>
+                                {% set No = No + 1 %}
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block appScript %}
+
+  <script src="views/app/template/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+  <script src="views/app/template/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+  <script src="views/app/js/personal/personal.js"></script>
+
+    <script>
+        $("#tblsistema").dataTable({
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No hay datos para mostrar",
+                "info": "Mostrando _END_ Registros, de un total de _TOTAL_ ",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "infoEmpty": "No hay entradas para mostrar",
+                "lengthMenu": "Mostrar _MENU_ Filas",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "autoWidth": true,
+            "bSort": false,
+          "scrollX": true
+        });
+    </script>
+{% endblock %}

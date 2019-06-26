@@ -1,0 +1,296 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}
+  <link rel="stylesheet" href="views/app/template/datatables/dataTables.bootstrap.css">
+  <style media="screen">
+    .at{
+      display: none;
+    }
+  </style>
+{% endblock %}
+{% block appBody %}
+<div class="row">
+    <div class="col-md-12">
+      <div class="col-md-4">
+        <section class="content-header">
+          <h4>
+               Plataforma Solicitud de Fondos para Proyectos
+          </h4>
+        </section>
+      </div>
+      <div class="col-md-8">
+        <div class="box">
+          <div class="pull-right">
+                  <div class="pull-right" id="divfiltros" name="divfiltros">
+                    <div class="col-md-2">
+                      <label>Estados</label>
+                      <select class="form-control" id='cmbestado' onchange="filtrar_estado()" name="cmbestado" >
+                        <option value="4">--</option>
+                        <option value="0">PENDIENTE</option>
+                        <option value="1">PREVALIDADO</option>
+                        <option value="2">APROBADO</option>
+                        <option value="3">RECHAZADO</option>
+                        <option value="4">PAGADO</option>
+                      </select>
+                    </div>
+
+                      <label>Fecha:</label>
+                      <label>&nbsp;</label>
+                      <input type="date" id="fechadesde" name="fechadesde" style="width:130px" value='{{ "now"|date("Y-m-d") }}'>
+                      <label>&nbsp;</label>
+                      <input type="date" id="fechahasta" name="fechahasta" style="width:130px" value='{{ "now"|date("Y-m-d") }}'>
+                      <label>&nbsp;</label>
+                      <button type="button" name="btnbuscar" id="btnbuscar" onclick="filtrar_por_fecha()" style="width:95px" class="btn btn-success">Filtrar</button>
+                      <button type="button" name="btnquitar" id="btnquitar" onclick="quitar_filtro()" style="width:95px" class="btn btn-danger">Quitar Filtro</button>
+
+                      <a class="btn btn-primary" id="btn_exporta_excel" href="avar/test" style="width:115px" title="Nueva Actividad" data-toggle="tooltip">
+                            Nueva Solicitud
+                      </a>
+
+                </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <form id="formordenesandes" name="formordenesandes">
+                      <div id="tblordenesandes" name="tblordenesandes">
+                        <table id="tablorden" name="tablorden" class="table table-bordered table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>ID_DE_PROYECTO</th>
+                                    <th>LOCALIDAD</th>
+                                    <th>AREA</th>
+                                    <th>FECHA INICIO</th>
+                                    <th>FECHA FINAL</th>
+                                    <th>DIAS_VIATICO_Y_TRANS.</th>
+                                    <th>DIAS_HOSPEDAJE</th>
+                                    <th>COSTO TOTAL</th>
+                                    <th>ESTADO</th>
+                                    <th>OPCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% set No = 1 %}
+                              {% for p in db_proyecto if false != db_proyecto %}
+                                  <tr>
+
+                                      <td class='text-center' onclick='consultarorden({{p.id_proyecto}})'><a class='btn'>{{p.num_proyecto}}</a></td>
+                                      <td>{{ p.descripcion}}</td>
+                                      <td>{{ p.areas}}</td>
+                                      <td>{{ p.fecha_inicio}}</td>
+                                      <td>{{ p.fecha_final}}</td>
+                                      <td>{{ p.cant_dias}}</td>
+                                      {% if p.hospedaje == false %}
+                                      <td>NO APLICA</td>
+                                      {% else %}
+                                      <td>{{ p.cant_dias_hospedaje}}</td>
+                                      {% endif %}
+                                      <td>{{ p.costo_total }}</td>
+                                      {% if p.estado == '0' %}
+                                      <td>PENDIENTE</td>
+                                      {% elseif p.estado == '1'  %}
+                                      <td>PREVALIDADO</td>
+                                      {% elseif p.estado == '2'  %}
+                                      <td>APROBADO</td>
+                                      {% elseif p.estado == '3'  %}
+                                      <td>RECHAZADO</td>
+                                      {% elseif p.estado == '4'  %}
+                                      <td>PAGADO</td>
+                                      {% endif %}
+                                      {% if db_perfil.perfil == 'CONTROL_INGRESO' %}
+                                      <td><a data-toggle='tooltip' data-placement='top' id="btnmodificar" name="btnmodificar" title='Modificar' href="avar/editar_control/{{p.id_proyecto}}" class='btn btn-success btn-sm'>
+                                          <i class='glyphicon glyphicon-edit'></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" title="Eliminar" onclick="eliminar({{p.id_proyecto}})" class='btn btn-danger btn-sm'>
+                                          <i class='glyphicon glyphicon-remove'></i>
+                                        </a>
+                                        {% if p.factura == 0 %}
+                                          <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                          <i class='glyphicon glyphicon-open'></i>
+                                        </a></td>
+                                        {% else %}
+                                          <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                          <i class='glyphicon glyphicon-file'></i>
+                                        </a></td>
+                                        {% endif %}
+                                      {% elseif db_perfil.perfil == 'CONTROL_PREVALIDADOR' %}
+                                      <td><a data-toggle='tooltip' data-placement='top' id="btnprevalidador" name="btnprevalidador" title='Aprobar' onclick="prevalidar({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                          <i class='glyphicon glyphicon-ok'></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' id="btnmodificar" name="btnmodificar" title='Modificar' href="avar/editar_control/{{p.id_proyecto}}" class='btn btn-success btn-sm'>
+                                          <i class='glyphicon glyphicon-edit'></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" onclick="eliminar({{p.id_proyecto}})"  title="Eliminar" class='btn btn-danger btn-sm'>
+                                          <i class='glyphicon glyphicon-remove'></i>
+                                          </a>
+                                          {% if p.factura == 0 %}
+                                            <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                            <i class='glyphicon glyphicon-open'></i></a></td>
+                                          {% else %}
+                                            <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                            <i class='glyphicon glyphicon-file'></i></a></td>
+                                          {% endif %}
+                                      {% elseif db_perfil.perfil == 'CONTROL_CONTADOR' %}
+                                          {% if p.estado != 4 %}
+                                          <td><a data-toggle='tooltip' data-placement='top' id="btncompletado" name="btncompletado" title='Completado' class='btn btn-primary btn-sm'><i class="fa fa-check-square-o"></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' id="btnpagar" name="btnpagar" title='Pagar' onclick="pagar({{p.id_proyecto}})" class='btn btn-success btn-sm'><i class="fa fa-dollar"></i></a>
+                                          {% else %}
+                                          <td><a data-toggle='tooltip' data-placement='top' id="btncompletado" name="btncompletado" title='Completado' class='btn btn-primary btn-sm'><i class="fa fa-check-square-o"></i></a>
+                                          <a data-toggle='tooltip' data-placement='top' id="btnpagar" name="btnpagar" title='Pagar' class='btn btn-success btn-sm'><i class="fa fa-dollar"></i></a>
+                                          {% endif %}
+
+                                          {% if p.factura == 0 %}
+                                            <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                            <i class='glyphicon glyphicon-open'></i></a>
+                                            <a data-toggle='tooltip' data-placement='top' id="btnimprimir" name="btnimprimir" title='Descargar PDF' href='avar/descargar_pdf/{{p.id_proyecto}}' target='_blank'  class='btn btn-danger btn-sm'><i class="glyphicon glyphicon-save"></i></a></td>
+                                          {% else %}
+                                            <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                            <i class='glyphicon glyphicon-file'></i></a>
+                                            <a data-toggle='tooltip' data-placement='top' id="btnimprimir" name="btnimprimir" title='Descargar PDF' href='avar/descargar_pdf/{{p.id_proyecto}}' target='_blank'  class='btn btn-danger btn-sm'><i class="glyphicon glyphicon-save"></i></a></td>
+                                          {% endif %}
+                                      {% elseif db_perfil.perfil == 'CONTROL_ADMIN' %}
+                                            {% if p.estado == '0'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id="btnprevalidador" name="btnprevalidador" title='Aprobar' onclick="prevalidar({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                <i class='glyphicon glyphicon-ok'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" title="Eliminar" onclick="eliminar({{p.id_proyecto}})" class='btn btn-danger btn-sm'>
+                                                <i class='glyphicon glyphicon-remove'></i></a>
+                                                {% if p.factura == 0 %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                                  <i class='glyphicon glyphicon-open'></i></a></td>
+                                                {% else %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                  <i class='glyphicon glyphicon-file'></i></a></td>
+                                                {% endif %}
+                                            {% elseif p.estado == '1'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id="btnprevalidador" name="btnprevalidador" title='Aprobar' onclick="prevalidar({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                <i class='glyphicon glyphicon-ok'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' id="btnmodificar" name="btnmodificar" title='Modificar' href="avar/editar_control/{{p.id_proyecto}}" class='btn btn-success btn-sm'>
+                                                <i class='glyphicon glyphicon-edit'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" onclick="eliminar({{p.id_proyecto}})"  title="Eliminar" class='btn btn-danger btn-sm'>
+                                                <i class='glyphicon glyphicon-remove'></i></a>
+                                                {% if p.factura == 0 %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                                  <i class='glyphicon glyphicon-open'></i></a></td>
+                                                {% else %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                  <i class='glyphicon glyphicon-file'></i></a></td>
+                                                {% endif %}
+                                            {% elseif p.estado == '2'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id='btncompletado' name='btncompletado' title='Completado' class='btn btn-warning btn-sm'><i class='fa fa-check-square-o'></i></a>
+                                            <a data-toggle='tooltip' data-placement='top' id='btnpagar' name='btnpagar' title='Pagar' onclick='pagar({{p.id_proyecto}})' class='btn btn-success btn-sm'><i class='fa fa-dollar'></i></a>
+                                            <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" title="Eliminar" onclick="eliminar({{p.id_proyecto}})" class='btn btn-danger btn-sm'>
+                                            <i class='glyphicon glyphicon-remove'></i></a>
+                                            {% if p.factura == 0 %}
+                                              <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                              <i class='glyphicon glyphicon-open'></i></a></td>
+                                            {% else %}
+                                              <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                              <i class='glyphicon glyphicon-file'></i></a></td>
+                                            {% endif %}
+                                            {% elseif p.estado == '3'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id="btnmodificar" name="btnmodificar" title='Modificar' href="avar/editar_control/{{p.id_proyecto}}" class='btn btn-success btn-sm'>
+                                                <i class='glyphicon glyphicon-edit'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" title="Eliminar" onclick="eliminar({{p.id_proyecto}})" class='btn btn-danger btn-sm'>
+                                                <i class='glyphicon glyphicon-remove'></i></a>
+                                            {% elseif p.estado == '4'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id="btncompletado" name="btncompletado" title='Completados' class='btn btn-primary btn-sm'><i class="fa fa-check-square-o"></i></a>
+                                            {% if p.factura == 0 %}
+                                              <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                              <i class='glyphicon glyphicon-open'></i></a>
+                                            {% else %}
+                                              <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                              <i class='glyphicon glyphicon-file'></i></a>
+                                            {% endif %}
+                                              <a data-toggle='tooltip' data-placement='top' id="btnimprimir" name="btnimprimir" title='Descargar PDF' href='avar/descargar_pdf/{{p.id_proyecto}}' target='_blank' class='btn btn-danger btn-sm'><i class="glyphicon glyphicon-save"></i></a></td>
+                                            {% endif %}
+                                      {% else  %}
+                                            {% if p.estado != '2'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id="btnaprobar" name="btnaprobar" title='Completar' onclick="prevalidar({{p.id_proyecto}})"  class='btn btn-primary btn-sm'>
+                                                <i class='glyphicon glyphicon-ok'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' id="btnmodificar" name="btnmodificar" title='Modificar' href="avar/editar_control/{{p.id_proyecto}}" class='btn btn-success btn-sm'>
+                                                <i class='glyphicon glyphicon-edit'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" title="Eliminar" onclick="eliminar({{p.id_proyecto}})" class='btn btn-danger btn-sm'>
+                                                <i class='glyphicon glyphicon-remove'></i></a>
+                                                {% if p.factura == 0 %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                                  <i class='glyphicon glyphicon-open'></i></a></td>
+                                                {% else %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                  <i class='glyphicon glyphicon-file'></i></a></td>
+                                                {% endif %}
+                                            {% elseif p.estado == '0'  %}
+                                            <td><a data-toggle='tooltip' data-placement='top' id="btnprevalidador" name="btnprevalidador" title='Aprobar' onclick="prevalidar({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                <i class='glyphicon glyphicon-ok'></i></a>
+                                                <a data-toggle='tooltip' data-placement='top' name="btnlisteliminar" id="btnlisteliminar" title="Eliminar" onclick="eliminar({{p.id_proyecto}})" class='btn btn-danger btn-sm'>
+                                                <i class='glyphicon glyphicon-remove'></i></a>
+                                                {% if p.factura == 0 %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                                  <i class='glyphicon glyphicon-open'></i></a></td>
+                                                {% else %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                  <i class='glyphicon glyphicon-file'></i></a></td>
+                                                {% endif %}
+                                            {% else %}
+                                                <td><a data-toggle='tooltip' data-placement='top' id="btncompletado" name="btncompletado" title='Completado' class='btn btn-success btn-sm'><i class="fa fa-check-square-o"></i></a>
+                                                {% if p.factura == 0 %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnsubir" id="btnsubir" title="Subir Archivo" onclick="subirdoc({{p.id_proyecto}})" class='btn btn-success btn-sm'>
+                                                  <i class='glyphicon glyphicon-open'></i></a></td>
+                                                {% else %}
+                                                  <a data-toggle='tooltip' data-placement='top' name="btnverfactura" id="btnverfactura" title="Ver Factura" onclick="verfactura({{p.id_proyecto}})" class='btn btn-primary btn-sm'>
+                                                  <i class='glyphicon glyphicon-file'></i></a></td>
+                                                {% endif %}
+                                            {% endif %}
+                                       {% endif %}
+                                  </tr>
+                                  {% set No = No + 1 %}
+                              {% endfor %}
+                            </tbody>
+                        </table>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'avar/modal_orden' %}
+{% include 'avar/modal_aprobacion' %}
+{% include 'avar/modal_subirdocumento' %}
+{% include 'avar/modal_factura' %}
+{% endblock %}
+{% block appScript %}
+
+  <script src="views/app/template/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+  <script src="views/app/template/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+  <script src="views/app/js/test/test.js"></script>
+
+
+  <script>
+    cargar_inicio();
+  </script>
+    <script>
+        $("#tablorden").dataTable({
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No hay datos para mostrar",
+                "info": "Mostrando _END_ Registros, de un total de _TOTAL_ ",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "infoEmpty": "No hay entradas para mostrar",
+                "lengthMenu": "Mostrar _MENU_ Filas",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "autoWidth": true,
+            "bSort": false,
+          "scrollX": true
+        });
+    </script>
+{% endblock %}

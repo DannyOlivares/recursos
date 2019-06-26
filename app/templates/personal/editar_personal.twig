@@ -1,0 +1,64 @@
+{% extends 'portal/portal' %}
+{% block appStylos %}{% endblock %}
+{% block appBody %}
+    <section class="content-header">
+        <h1>
+          Personal
+            <small>Editar Personal</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#">
+                    <i class="fa fa-home"></i>
+                    Home</a>
+            </li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <form id="formeditarperso" action="" method="POST">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <input type="hidden" name="txteditarpersonalid" value="{{db_detalle.cod_personal}}">
+                                Rut
+                                <input class="form-control" name="txtedirutpersonal" id="txtedirutpersonal" type="text" value="{{db_detalle.rut_personal}}" required="required"/>
+                                NOMBRE
+                                <input class="form-control" name="txteditarnombrepersonal" id="txteditarnombrepersonal" type="text" value="{{db_detalle.nombre_personal}}" required="required"/>
+                                EMAIL
+                                <input class="form-control" name="txteditaremailpersonal" id="txteditaremailpersonal" type="text" value="{{db_detalle.email}}" required="required"/>
+                                Area
+                                <select id="cmbeditararea" name="cmbeditararea" class="form-control">
+                                  <option value='{{db_detalle.area_personal}}'>{{db_detalle.descripcion}}</option>
+                                  {% for a in db_area if false != db_area %}
+                                  {% if db_detalle.area_personal != a.cod_area %}
+                                        <option value="{{a.cod_area}}">{{a.descripcion}}</option>
+                                  {% else %}
+
+
+                                    {% endif %}
+                                  {% endfor %}
+                                </select>
+                                Cargo
+                                <input class="form-control" name="txteditarcargopersonal" id="txteditarcargopersonal" type="text" value="{{db_detalle.cargo_personal}}" required="required"/>
+                            </div>
+                        <div class="col-md-12">
+                          <div class="col-md-4">
+                          </div>
+                          <button type="button" class="btn btn-primary" id="btnmodificarpersonal" onclick="modificarpersonal()" name="btnmodificarpersonal">MODIFICAR PERSONAL</button>
+                        </div>
+                      </div>
+                    </form>
+            </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}
+{% block appScript %}
+    <script src="views/app/js/personal/personal.js"></script>
+{% endblock %}
